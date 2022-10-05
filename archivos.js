@@ -19,7 +19,9 @@ class Contenedor{
                     }
                 }       
                 if (flag){
+                    objeto.id = productos[productos.length-1].id + 1
                     productos.push(objeto)
+                    console.log(`ID del objeto: ${objeto.id}`)
                 }else{
                     console.log("Ese id ya esta siendo utilizado")
                 }          
@@ -88,8 +90,8 @@ class Contenedor{
 
 const cont = new Contenedor
 
-cont.save({"title": "Cartel blanco", "price": 2000, "thumbnail": "https://neondesign.netlify.app/img/Trabajo4.jpg", "id": 4})
+//cont.save({"title": "Cartel blanco", "price": 2000, "thumbnail": "https://neondesign.netlify.app/img/Trabajo4.jpg"})
 cont.getAll();
-cont.getById(1);
-cont.deleteByNumber(4)
-cont.deleteAll()
+// cont.getById(1);
+//cont.deleteByNumber(4)
+// cont.deleteAll()
