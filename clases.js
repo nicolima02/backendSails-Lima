@@ -15,11 +15,7 @@ class Usuario {
     }
 
     countMascotas(){
-        let i = 0;
-        for(let el in this.mascotas){
-            i ++
-        }
-        console.log(`${this.nombre} tiene ${i} mascotas`)
+        console.log(`${this.nombre} tiene ${this.mascotas.length} mascotas`)
     }
 
     addBook(nombre,autor){
