@@ -6,8 +6,7 @@ const Contenedor = require("./archivos.js")
 const productos = new Contenedor
 
 app.get('/productos', (req, res)=>{
-    res.send(productos.getAll())
-    
+    res.send(productos.getAll()) 
 })
 
 app.get('productoRandom', (req,res)=>{
