@@ -53,21 +53,19 @@ class Contenedor{
     }
 
     async getAll(){
+
         try {
-            await fs.promises.readFile(ruta, 'utf-8')
-            .then(contenido => {
-                if(contenido !== "" || contenido !== "[]"){
-                    return (JSON.parse(contenido))                               
-                }else{
-                    console.log("El archivo esta vacio")
-                }
-            })
-            .catch(err => {
-                console.log("error", err)
-            })
+            const contenido = await fs.promises.readFile(ruta, 'utf-8');
+            console.log(contenido)
+            if(contenido !== "" || contenido !== "[]"){
+                return (JSON.parse(contenido))                              
+            }else{
+                console.log("El archivo esta vacio")
+            }
         } catch (error) {
-            
+            console.log(error)
         }
+
     }
 
     async deleteByNumber(numero){      
