@@ -14,7 +14,6 @@ rutaProductos.get("/", async(req, res)=>{
 
 rutaProductos.get("/:id", async(req, res)=>{
     const id = req.params.id
-    console.log(id)
     const productos = JSON.parse(await fs.readFile(filePath, "utf-8"))
     const indice = productos.findIndex(unproducto => unproducto.id == id)
     
@@ -45,26 +44,30 @@ rutaProductos.post("/", async(req,res)=>{
             msg:"campos invalidos"
         })
     }
+    if((typeof(price) === "number")){
+        const nuevoProducto = {
+            title,
+            price,
+            thumbnail,
+            id
+        }
 
-    const nuevoProducto = {
-        title,
-        price,
-        thumbnail,
-        id
+        productos.push(nuevoProducto)
+
+        await fs.writeFile(filePath, JSON.stringify(productos, null, "\t"))
+
+        res.status(201).json({
+            msg: "el producto fue agregado",
+            data: nuevoProducto
+
+        })
+    }else{  
+        res.status(400).json({
+            msg:"campo precio invalido"
+        })   
     }
 
     
-    
-    
-    productos.push(nuevoProducto)
-
-    await fs.writeFile(filePath, JSON.stringify(productos, null, "\t"))
-
-    res.json({
-        msg: "ok",
-        data: nuevoProducto
-
-    })
 
 })
 
@@ -72,24 +75,25 @@ rutaProductos.delete("/:id", async(req,res)=>{
     const id = req.params.id
     const productos = JSON.parse(await fs.readFile(filePath, "utf-8"))
     const indice = productos.findIndex(user => user.id == id)
-
-    if(indice < 0){
-        return res.json({
-            msg: "ok"
-        })
-    }
-
-    productos.splice(indice, 1)
-    await fs.writeFile(filePath, JSON.stringify(productos, null, "\t"))
+    if(productos[indice]?.id){
+        productos.splice(indice, 1)
+        await fs.writeFile(filePath, JSON.stringify(productos, null, "\t"))
 
     res.json({
         msg: `borrando al producto con id ${id}`,
     })
+    }else{
+        res.status(404).json({
+            msg:"El producto no fue encontrado"
+        })
+    }
+
+    
 })
 
 rutaProductos.put("/:id", async(req,res)=>{
     const id = req.params.id
-    const {title,price,thumbnail} = req.body
+    let {title,price,thumbnail} = req.body
     const productos = JSON.parse(await fs.readFile(filePath, "utf-8"))
     const indice = productos.findIndex(user => user.id == id)
     if(indice < 0){
@@ -97,11 +101,24 @@ rutaProductos.put("/:id", async(req,res)=>{
             msg: "ok"
         })
     }
+    const productoViejo = productos[indice]
 
-    if(!title || !price|| !thumbnail){
+    if(!title && !price&& !thumbnail){
         return res.status(400).json({
             msg:"campos invalidos"
         })
+    }
+
+    
+    if(!title){
+        title = productoViejo.title
+    }
+
+    if(!price){
+        price = productoViejo.price
+    }
+    if(!thumbnail){
+        thumbnail = productoViejo.thumbnail
     }
 
     const prodActualizado = {

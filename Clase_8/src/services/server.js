@@ -10,4 +10,5 @@ app.use(express.urlencoded({extended: true}))
 
 app.use("/api", mainRouter)
 app.use(express.static("public"))
+
 module.exports = app
