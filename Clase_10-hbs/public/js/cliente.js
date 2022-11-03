@@ -11,18 +11,14 @@ const inputUser = document.querySelector(".inputUser")
 
 
 form.addEventListener('submit', function (ev) {
-    ev.preventDefault()
-    
     console.log("Se hizo click en submit")
     const producto = {
         title: title.value,
         price: price.value,
         thumbnail: thumbnail.value
     }
-
     console.log(producto)
-    socket.emit('envioAlServer', producto)  
-    ev.target.submit()
+    socket.emit('envioAlServer', producto)    
 })
 
 
@@ -58,7 +54,7 @@ function outputMsg(mensaje) {
 }
 
 socket.on("producto", (datos)=>{
-    
+    console.log(datos)
     outputData(datos)
     
 })
