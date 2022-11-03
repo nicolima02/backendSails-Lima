@@ -2,7 +2,7 @@ const express = require("express")
 const mainRouter = require("../routes/index.js")
 const { engine } = require("express-handlebars")
 const http = require("http")
-const { iniwWsServer } = require("./socket")
+const { initWsServer } = require("./socket")
 const io = require ("socket.io")
 const path = require("path")
 const app = express()
@@ -16,7 +16,7 @@ const viewFolderPath = path.resolve(__dirname, "../../views")
 const layoutFolderPath = `${viewFolderPath}/layouts`
 const partialFolderPath = `${viewFolderPath}/partials`
 const defaultLayoutPath = `${layoutFolderPath}/index.hbs`
-app.use("/", mainRouter)
+app.use("/api", mainRouter)
 
 app.set("view engine", "hbs")
 app.set("views", viewFolderPath)
@@ -31,17 +31,15 @@ const myHTTPServer = http.createServer(app)
 
 const myWebsocketServer= io(myHTTPServer)
 
-// initWsServer(server)
+initWsServer(myHTTPServer);
 
 myWebsocketServer.on('connection', (socket) =>{
     console.log("Se conecto un cliente")
     console.log("ID SOCKET SERVER", socket.id)
     console.log("ID SOCKET CLIENTE", socket.client.id)
-    socket.on('envioAlServer', (datos)=>{
-        myWebsocketServer.emit("producto", datos) 
-    })
 
     socket.on("mensajeRecibido", (mensaje)=>{
+        console.log(mensaje)
         myWebsocketServer.emit("mensajeAlChat", mensaje)
     })
 })
@@ -52,8 +50,10 @@ myWebsocketServer.on('connection', (socket) =>{
 
 
 
+
+
 app.get("/", async(req,res) =>{
-    res.render("lista", {layout: defaultLayoutPath})
+    res.render("main", {layout: defaultLayoutPath})
 })
 
 

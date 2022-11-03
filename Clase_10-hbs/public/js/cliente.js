@@ -1,4 +1,4 @@
-const socket = io.connect()
+const socket = io()
 
 let form = document.getElementById("formularioAdd")
 const title = document.getElementById("title")
@@ -9,18 +9,43 @@ const formChat = document.querySelector(".formulario_chat")
 const inputUser = document.querySelector(".inputUser")
 
 
-
-form.addEventListener('submit', function (ev) {
-    console.log("Se hizo click en submit")
-    const producto = {
-        title: title.value,
-        price: price.value,
-        thumbnail: thumbnail.value
+async function postData(url = '', data = {}) {
+    const response = await fetch(url, {
+        method: 'POST', 
+        mode: 'cors', 
+        cache: 'no-cache', 
+        credentials: 'same-origin', 
+        headers: {
+        'Content-Type': 'application/json',
+        
+        },
+        redirect: 'follow', 
+        referrerPolicy: 'no-referrer', 
+        body: JSON.stringify(data), 
+    });
+    return response.json();  
     }
-    console.log(producto)
-    socket.emit('envioAlServer', producto)    
+
+
+form.addEventListener('submit', async (ev) =>{
+    ev.preventDefault()
+    console.log("Se hizo click en submit")
+    
+    try{
+        const data = {
+            title: title.value,
+            price: price.value,
+            thumbnail: thumbnail.value
+        }
+        const url = 'http://localhost:8080/api/productos';
+        response = await postData(url, data)   
+        console.log(response)     
+    }catch (err){
+        console.log(err)
+    }
 })
 
+socket.emit('allProducts')
 
 formChat.addEventListener('submit', (ev)=>{
     ev.preventDefault()
@@ -32,14 +57,15 @@ formChat.addEventListener('submit', (ev)=>{
             date: new Date().toLocaleString()
         }
         socket.emit("mensajeRecibido", mensaje)
-
         inputMensaje.value = ""
+        console.log(mensaje)
     }else{
         alert("tenes que poner tu nombre de usuario")
     }
 })
 
 socket.on("mensajeAlChat", mensaje=>{
+    console.log(mensaje)
     outputMsg(mensaje)
 })
 
@@ -54,9 +80,7 @@ function outputMsg(mensaje) {
 }
 
 socket.on("producto", (datos)=>{
-    console.log(datos)
     outputData(datos)
-    
 })
 
 function outputData(datos){
