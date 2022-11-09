@@ -25,6 +25,10 @@ async save(miObjeto) {
         title: miObjeto.title,
         price: miObjeto.price,
         thumbnail: miObjeto.thumbnail,
+        codigo: miObjeto.codigo,
+        desc: miObjeto.desc,
+        stock: miObjeto.stock,
+        timestamp: miObjeto.timestamp,
         id
     };
 
@@ -35,18 +39,6 @@ async save(miObjeto) {
     return productoNuevo;
 }
 
-async getById(number) {
-    const productos = await this.getData();
-
-    const indice = productos.findIndex((unProducto) => {
-        if (unProducto.id === number) return true;
-        else return false;
-    });
-
-    if (indice === -1) return null;
-
-    return productos[indice];
-}
 
 async getAll() {
     const productos = await this.getData();

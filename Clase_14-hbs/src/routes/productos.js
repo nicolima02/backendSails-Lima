@@ -2,19 +2,23 @@ const {Router} = require("express")
 const rutaProductos = Router()
 const fs = require("fs/promises")
 const path = require("path")
+const { ProductosController } = require("../controller/productos")
+const { validarAdmin } = require('../middlewares/admin');
+const { socketEmit } = require('../services/socket');
 
 const filePath = path.resolve(__dirname, "../../productos.txt")
 
-rutaProductos.get("/", async(req, res)=>{
-    const productos = await fs.readFile(filePath, "utf-8")
+rutaProductos.get("/", async(req,res)=>{
+    const productos = await ProductosController.getAll()
     res.json({
-        data:JSON.parse(productos)
+        data:productos
     })
 })
 
+
 rutaProductos.get("/:id", async(req, res)=>{
     const id = req.params.id
-    const productos = JSON.parse(await fs.readFile(filePath, "utf-8"))
+    const productos = await ProductosController.getAll()
     const indice = productos.findIndex(unproducto => unproducto.id == id)
     
     if(indice < 0){
@@ -31,53 +35,48 @@ rutaProductos.get("/:id", async(req, res)=>{
     })
 })
 
-rutaProductos.post("/", async(req,res)=>{
-    const data = req.body;
-    console.log(req.body);
-    const fileData = await fs.readFile(filePath, "utf-8")
-    const productos = JSON.parse(fileData)
 
-    const {title, price, thumbnail} = req.body
+
+rutaProductos.post("/", validarAdmin, async(req,res)=>{
+    const productos = await ProductosController.getAll()
+
+    let {title, price, thumbnail,desc,codigo} = req.body
     const id = (productos[productos.length-1].id)+1
-    if(!title || !price || !thumbnail){
+    const timestamp = Date.now()
+    if(!title || !price || !thumbnail|| !desc || !codigo){
         return res.status(400).json({
             msg:"campos invalidos"
         })
     }
-    if((typeof(price) === "number")){
-        const nuevoProducto = {
-            title,
-            price,
-            thumbnail,
-            id
-        }
 
-        productos.push(nuevoProducto)
-
-        await fs.writeFile(filePath, JSON.stringify(productos, null, "\t"))
-
-        res.status(201).json({
-            msg: "el producto fue agregado",
-            data: nuevoProducto
-
-        })
-    }else{  
-        res.status(400).json({
-            msg:"campo precio invalido"
-        })   
+    price = parseInt(price)
+    codigo = parseInt(codigo)
+    const nuevoProducto = {
+        title,
+        price,
+        thumbnail,
+        desc,
+        codigo,
+        stock,
+        timestamp,
+        id
     }
 
-    
+    const result = await ProductosController.save(nuevoProducto)
+
+    socketEmit("producto", result)
+
+    res.json({msg:nuevoProducto})
 
 })
 
-rutaProductos.delete("/:id", async(req,res)=>{
+rutaProductos.delete("/:id",validarAdmin, async(req,res)=>{
     const id = req.params.id
-    const productos = JSON.parse(await fs.readFile(filePath, "utf-8"))
+    const productos = await ProductosController.getAll()
     const indice = productos.findIndex(user => user.id == id)
     if(productos[indice]?.id){
         productos.splice(indice, 1)
-        await fs.writeFile(filePath, JSON.stringify(productos, null, "\t"))
+        await ProductosController.saveData(productos)
 
     res.json({
         msg: `borrando al producto con id ${id}`,
@@ -91,10 +90,10 @@ rutaProductos.delete("/:id", async(req,res)=>{
     
 })
 
-rutaProductos.put("/:id", async(req,res)=>{
+rutaProductos.put("/:id",validarAdmin, async(req,res)=>{
     const id = req.params.id
-    let {title,price,thumbnail} = req.body
-    const productos = JSON.parse(await fs.readFile(filePath, "utf-8"))
+    let {title,price,thumbnail,desc,codigo} = req.body
+    const productos = await ProductosController.getAll()
     const indice = productos.findIndex(user => user.id == id)
     if(indice < 0){
         return res.json({
@@ -121,21 +120,39 @@ rutaProductos.put("/:id", async(req,res)=>{
         thumbnail = productoViejo.thumbnail
     }
 
+    if(!desc){
+        desc = productoViejo.desc
+    }
+    if(!codigo){
+        codigo = productoViejo.codigo
+    }
+
     const prodActualizado = {
         title,
         price,
         thumbnail,
+        desc,
+        codigo,
+        timestamp,
         id: productos[indice].id
     }
 
     productos.splice(indice,1, prodActualizado)
 
-    await fs.writeFile(filePath, JSON.stringify(productos, null, "\t"))
-    
+    await ProductosController.saveData(productos)
 
     res.json({
         msg: `modificando producto con id: ${id}`,
         data: prodActualizado
+    })
+})
+
+rutaProductos.delete("/", async (req,res)=>{
+    const nuevo = []
+    await ProductosController.saveData(nuevo)
+    res.json({
+        msg:"Borrando todos los productos",
+        data:nuevo
     })
 })
 

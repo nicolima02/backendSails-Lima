@@ -3,18 +3,30 @@
 		"title": "cartel azul",
 		"price": 500,
 		"thumbnail": "https://neondesign.netlify.app/img/Trabajo2.jpg",
+		"codigo": 1111,
+		"desc": "cartel azul de neon",
+		"stock": 5,
+		"timestamp": 1668023545841,
 		"id": 1
 	},
 	{
 		"title": "cartel naranja",
 		"price": 1000,
 		"thumbnail": "https://neondesign.netlify.app/img/Trabajo15.jpg",
+		"codigo": 2222,
+		"desc": "cartel naranja de neon",
+		"stock":8,
+		"timestamp": 1668029395528,
 		"id": 2
 	},
 	{
 		"title": "cartel violeta",
 		"price": 1500,
 		"thumbnail": "https://neondesign.netlify.app/img/Trabajo3.jpg",
+		"codigo": 3333,
+		"desc": "cartel violeta de neon",
+		"stock":6,
+		"timestamp": 1668029433482,
 		"id": 3
 	}
 ]
