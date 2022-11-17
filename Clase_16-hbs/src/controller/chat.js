@@ -7,7 +7,7 @@ class chat {
         this.knex = knex(config)
     }
     async createTable(){
-        await this.knex.schema.dropTableIfExists('productos')
+        await this.knex.schema.dropTableIfExists('chat')
         await this.knex.schema.createTable('chat', table=>{
             table.string('date').primary(),
             table.string('user'),

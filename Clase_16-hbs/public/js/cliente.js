@@ -66,11 +66,13 @@ formChat.addEventListener('submit', (ev)=>{
 
 socket.emit("allChat")
 
-socket.on("mensajeAlChat", mensaje=>{
+socket.on("mensaje", mensaje=>{
     outputMsg(mensaje)
 })
 
-
+socket.on("mensajeAlChat", mensaje=>{
+    outputMsg(mensaje)
+})
 function outputMsg(mensaje) {  
     const div = document.createElement("div")
     div.classList.add("estructura")

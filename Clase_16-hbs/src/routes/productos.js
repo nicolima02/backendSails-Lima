@@ -7,6 +7,7 @@ const options = require('../../options/db')
 const { validarAdmin } = require('../middlewares/admin');
 const { socketEmit } = require('../services/socket');
 
+
 const filePath = path.resolve(__dirname, "../../productos.txt")
 
 const ProductosController = new SQL(options)
@@ -15,9 +16,11 @@ const ProductosController = new SQL(options)
 
 rutaProductos.get("/", async(req,res)=>{
     const productos = await ProductosController.getAll()
+    
     res.json({
         data:productos
     })
+    
 })
 
 
