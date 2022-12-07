@@ -5,8 +5,14 @@ const title = document.getElementById("title")
 const price = document.getElementById("price")
 const thumbnail = document.getElementById("thumbnail")
 const inputMensaje = document.querySelector(".enviarmsg")
+const inputNombre = document.querySelector(".inputNombre")
+const inputApellido = document.querySelector(".inputApellido")
+const inputEdad = document.querySelector(".inputEdad")
+const inputAlias = document.querySelector(".inputAlias")
+const inputAvatar = document.querySelector(".inputAvatar")
 const formChat = document.querySelector(".formulario_chat")
-const inputUser = document.querySelector(".inputUser")
+
+const inputMail = document.querySelector(".inputUser")
 
 
 async function postData(url = '', data = {}) {
@@ -49,16 +55,22 @@ socket.emit('allProducts')
 
 formChat.addEventListener('submit', (ev)=>{
     ev.preventDefault()
-    if(inputUser.value !== ""){
+    if(inputMail.value !== ""){
         console.log("Se envio el mensaje")
         const mensaje ={
-            msg: inputMensaje.value,
-            user: inputUser.value,
+            author:{
+            mail: inputMail.value,
+            nombre: inputNombre.value,
+            apellido: inputApellido.value,
+            edad: inputEdad.value,
+            aliass: inputAlias.value,
+            avatar:inputAvatar.value
+            },
+            texto:inputMensaje.value ,
             date: new Date().toLocaleString()
         }
         socket.emit("mensajeRecibido", mensaje)
         inputMensaje.value = ""
-        console.log(mensaje)
     }else{
         alert("tenes que poner tu nombre de usuario")
     }
@@ -73,12 +85,14 @@ socket.on("mensaje", mensaje=>{
 socket.on("mensajeAlChat", mensaje=>{
     outputMsg(mensaje)
 })
+
 function outputMsg(mensaje) {  
     const div = document.createElement("div")
     div.classList.add("estructura")
-    div.innerHTML = `<p id="user">${mensaje.user}</p>
+    div.innerHTML = `<p id="user">${mensaje.author.mail}</p>
     <p id="date">[${mensaje.date}]</p>
-    <p id="message">:${mensaje.msg}</p>`
+    <p id="message">:${mensaje.texto}</p>
+    <img src=${mensaje.author.avatar} class="imgAvatar">`
     document.getElementById("mensajes").appendChild(div)
 }
 

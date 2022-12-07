@@ -158,3 +158,9 @@ a{
     color: green;
     margin: 3px;
 }
+
+.imgAvatar{
+    width: 40px;
+    height: 40px;
+    border-radius: 4000px;
+}

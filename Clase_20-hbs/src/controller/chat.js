@@ -1,31 +1,26 @@
-const chatoptions = require('../../options/chatDB')
-const knex = require('knex')
-const { socketEmit } = require('../services/socket')
+// const chatoptions = require('../../options/chatDB')
+// const knex = require('knex')
+// const { socketEmit } = require('../services/socket')
+const { default: mongoose } = require("mongoose")
+const {initMongoDB, disconnectMongo} = require("../conexion.js")
+const {chatModel} = require("./schema")
 
-class chat {
-    constructor(config){
-        this.knex = knex(config)
-    }
-    async createTable(){
-        await this.knex.schema.dropTableIfExists('chat')
-        await this.knex.schema.createTable('chat', table=>{
-            table.string('date').primary(),
-            table.string('user'),
-            table.string('msg')
-        })
+class chatMongo {
+    async iniciarMongo(){
+        await initMongoDB()
     }
 
     async getMessage(){
-        return await this.knex.from('chat').select('*')
+        return await chatModel.find()
     }
 
     async postMessage(mensaje){
-        await this.knex('chat').insert(mensaje)
+        await chatModel.create(mensaje)
     }
 }
 
-const chatSQL = new chat(chatoptions)
 
 
 
-module.exports = chatSQL
+
+module.exports = chatMongo
