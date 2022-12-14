@@ -11,9 +11,10 @@ const inputEdad = document.querySelector(".inputEdad")
 const inputAlias = document.querySelector(".inputAlias")
 const inputAvatar = document.querySelector(".inputAvatar")
 const formChat = document.querySelector(".formulario_chat")
-
 const inputMail = document.querySelector(".inputUser")
-
+const formlogin = document.querySelector(".form_login")
+const login = document.querySelector(".input_nombre_login")
+const logincont = document.querySelector(".login-container")
 
 async function postData(url = '', data = {}) {
     const response = await fetch(url, {
@@ -32,6 +33,22 @@ async function postData(url = '', data = {}) {
     return response.json();  
     }
 
+formlogin.addEventListener("submit", async(ev) =>{
+    // ev.preventDefault()
+    
+    try{
+        const data = {
+            nombre: login.value
+        }
+
+        const url = 'http://localhost:8080/'
+        response = await postData(url, data)   
+        
+    }catch(err){
+        console.log(err)
+    }
+
+})
 
 form.addEventListener('submit', async (ev) =>{
     ev.preventDefault()
@@ -43,6 +60,7 @@ form.addEventListener('submit', async (ev) =>{
             price: price.value,
             thumbnail: thumbnail.value
         }
+        
         const url = 'http://localhost:8080/api/productos';
         response = await postData(url, data)   
         console.log(response)     
@@ -50,6 +68,8 @@ form.addEventListener('submit', async (ev) =>{
         console.log(err)
     }
 })
+
+
 
 socket.emit('allProducts')
 
@@ -82,6 +102,15 @@ socket.on("mensaje", mensaje=>{
     outputMsg(mensaje)
 })
 
+console.log(productos)
+
+
+setInterval(() => {
+    socket.on("nombre", (data)=>{
+        console.log(data)
+    })
+}, 1000);
+
 socket.on("mensajeAlChat", mensaje=>{
     outputMsg(mensaje)
 })
@@ -99,6 +128,12 @@ function outputMsg(mensaje) {
 socket.on("producto", (datos)=>{
     outputData(datos)
 })
+
+
+function output(data){
+    logincont.innerHTML = `<p>Bienvenido/a ${data}</p>`
+    
+}
 
 function outputData(datos){
     const div = document.createElement("div")

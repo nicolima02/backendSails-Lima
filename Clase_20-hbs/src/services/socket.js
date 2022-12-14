@@ -32,26 +32,29 @@ const initWsServer = (server) => {
         const chatCompleto = await ChatController.getMessage()
         const normalizado = (data)=>{
             
-            const persona = new schema.Entity('persona',{},{
+            const author = new schema.Entity('author',{},{
                 idAttribute:'mail'
             })
 
-            const texto = new schema.Entity('texto',{
-                
-            })
-
-            const articulo = new schema.Entity('articulo', {
-                autor: persona
-            })
-            const finalSchema = [articulo]
+            const msge = new schema.Entity(
+                'message',
+                {
+                    author: author,
+                },
+                { idAttribute: '_id' }
+            );
+            
+            const finalSchema = new schema.Array(msge);
+        
             const normalizedData = normalize(data, finalSchema)
             return normalizedData
 }
         const normalizadata = normalizado(chatCompleto)
+        console.log(normalizadata)
         
         chatCompleto.forEach((unMensaje)=>{
             socket.emit('mensaje', unMensaje)
-        }) 
+        })
         socket.on("mensajeRecibido", (mensaje)=>{
             
             ChatController.iniciarMongo()

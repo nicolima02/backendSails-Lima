@@ -28,7 +28,7 @@ const carritoSchema = new mongoose.Schema(
 
 const chatSchema = new mongoose.Schema(
     {
-        author:{type:Object, require:true,
+        author:{type: Object, required:true,
             mail: {type:String, require:true},
             nombre: {type: String}, require:true,
             apellido: {type:String, require:true},

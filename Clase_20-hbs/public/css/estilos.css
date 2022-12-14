@@ -164,3 +164,29 @@ a{
     height: 40px;
     border-radius: 4000px;
 }
+
+.login-container{
+    padding: 10px;
+    background-color: rgb(185, 185, 185);
+    width: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+}
+
+.login-container p{
+    font-weight: 800;
+    margin-right: 5px;
+}
+
+.input_nombre_login{
+    border-radius: 5px;
+    border-color: transparent;
+    writing-mode: sideways-lr;
+}
+
+.form_login{
+    display: flex;
+}
+
